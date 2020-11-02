@@ -1,58 +1,115 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="box">
+    <div 
+      class="box1" 
+      v-for="(val, key) in dataList" 
+      :key="key" 
+      :style="{width: val.width, backgroundColor: val.color}"
+    >
+    </div>
+    <div 
+      class="box1" 
+      v-for="(val, key) in resArr" 
+      :key="key" 
+      :style="genStyleStr(val)"
+    >
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
-    msg: String
-  }
-}
+    msg: String,
+  },
+  data() {
+    return {
+      dataArr: [7, 14, 121, 23, 5, 92, 56, 78, 28],
+      dataList: {},
+      dataArr1: [7, 14, 121, 23, 5, 92, 56, 78, 28],
+      dataList1: {},
+      resArr: [],
+      maxVal: null,
+    };
+  },
+  created() {
+    this.init();
+    this.init1();
+  },
+  methods: {
+    init1() {
+      this.resArr = this.dataArr1;
+      const arr = this.resArr;
+      let max = arr[0];
+      for (let i=1;i<arr.length;i++) {
+        if (arr[i]>max) {
+          max = arr[i];
+        }
+      }
+      this.maxVal = max;
+    },
+    genStyleStr (val) {
+      const max = this.maxVal;
+      const perc = val/max;
+      const widthStr = 'width:'+(perc*500)+'px;';
+      const R = 255*perc;
+      const G = 255-R;
+      const colorStr = 'background:rgb('+R+','+G+',0)';
+      return widthStr + colorStr
+    },
+    init() {
+      let arr = this.dataArr;
+      // 找最大和最小数据
+      let max = arr[0];
+      // 规定最大高度和最小高度
+      let maxWidth = 500
+      for (let i = 1; i < arr.length; i++) {
+        if(arr[i] > max){
+          max = arr[i]
+        }
+      }
+      // 遍历数组找颜色和宽度
+      // 绿色： #00ff00 [0,255,0]
+      // 红色  #ff0000  [255,0,0]
+      let currentNum = null
+      let currentWidth = null
+      let currentR = null
+      let currentG = null
+      let currentColor = ""
+      for(let i = 0; i < arr.length; i++){
+        // 设置宽度
+        currentNum = arr[i]
+        currentWidth = currentNum/max*maxWidth
+        this.dataList[i] = {}
+        this.dataList[i].width = currentWidth + 'px'
+        // 设置颜色
+        currentR = currentNum/max*255
+        currentG = 255 - currentNum/max*255
+        currentColor +="rgb(" + currentR+ "," + currentG + ",0)"
+        this.dataList[i].color = currentColor
+        currentColor = ""
+      }
+      console.log(this.dataList)
+      // 排序
+      this.dataArr1.sort(function(a,b){
+        return b - a
+      })
+      console.log(this.dataArr1)
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.box {
+  margin-top: 100px;
+  margin-left: 100px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.box1 {
+  height: 10px;
+  margin-bottom: 10px;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+
 </style>
